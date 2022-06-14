@@ -15,7 +15,6 @@ class PowerMyService implements MyServiceInterface
 
     public function setId(int $id)
     {
-        // echo 'セットとと' . $id . '<br>';
         if ($id >= 0 && $id < count($this->data)) {
             $this->id = $id;
             $this->msg = 'あなたが好きなのは、' . $id . '番の' . $this->data[$id] . 'ですね！';
