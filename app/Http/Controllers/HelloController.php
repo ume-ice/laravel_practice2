@@ -10,6 +10,7 @@ use App\Person;
 use App\MyClasses\MyServiceInterface;
 use App\Facades\MyService;
 use Illuminate\Support\Facades\DB;
+use App\Http\Pagination\MyPaginator;
 
 class HelloController extends Controller
 {
@@ -22,7 +23,7 @@ class HelloController extends Controller
         // $myService = app('App\MyClasses\MyService');
     }
 
-    public function index($id)
+    public function index(Request $request)
     {
         // if ($id >= 0) {
         //     $msg = 'get name like "' . $id . '"';
@@ -53,17 +54,31 @@ class HelloController extends Controller
         //         return true;
         //     });
 
-        $ids = explode(',', $id);
-        $msg = 'get people.';
-        $result = DB::table('people')
-            ->whereIn('id', $ids);
-            // ->get();
+        // $id = $request->query('page');
+        $msg = 'show people record.';
 
-            dump($result);die;
+        $even = Person::get()->filter(function($item) {
+            return $item->id % 2 == 0;
+        });
+        $even2 = Person::get()->filter(function($item) {
+            return $item->age % 2 == 0;
+        });
+
+        $map = $even->map(function($item, $key) {
+            return $item->id . ':' . $item->name;
+        });
+
+        // DB::table('people')->insert(['name'=>'test4', 'age'=> 18, 'mail'=>'test4@gmail.com']);
+        // DB::table('people')->insert(['name'=>'test5', 'age'=> 18, 'mail'=>'test5@gmail.com']);
+        // DB::table('people')->insert(['name'=>'test6', 'age'=> 18, 'mail'=>'test6@gmail.com']);
+
+        $result = $even->merge($even2);
+
+        // $result = Person::get()->except($even);
 
         $data = [
-            'msg' => $msg,
-            'data' => $result,
+            'msg' => $map,
+            'data' => $even,
         ];
         return view('hello.index', $data);
     }
