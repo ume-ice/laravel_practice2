@@ -54,53 +54,62 @@ class HelloController extends Controller
         //         return true;
         //     });
 
-        // $id = $request->query('page');
-        $msg = 'show people record.';
-
-        $even = Person::get()->filter(function($item) {
-            return $item->id % 2 == 0;
-        });
-        $even2 = Person::get()->filter(function($item) {
-            return $item->age % 2 == 0;
-        });
-
-        $map = $even->map(function($item, $key) {
-            return $item->id . ':' . $item->name;
-        });
-
         // DB::table('people')->insert(['name'=>'test4', 'age'=> 18, 'mail'=>'test4@gmail.com']);
         // DB::table('people')->insert(['name'=>'test5', 'age'=> 18, 'mail'=>'test5@gmail.com']);
         // DB::table('people')->insert(['name'=>'test6', 'age'=> 18, 'mail'=>'test6@gmail.com']);
 
-        $result = $even->merge($even2);
+        Person::get(['*'])->searchable();
 
-        // $result = Person::get()->except($even);
+        $msg = 'show people record.';
+        $result = Person::get();
 
         $data = [
-            'msg' => $map,
-            'data' => $even,
+            'input' => '',
+            'msg' => $msg,
+            'data' => $result,
         ];
         return view('hello.index', $data);
     }
 
-    public function other(Request $request)
+    public function save($id, $name)
     {
-        // $data = [
-        //     'msg' => $request->bye,
-        // ];
-        // return view('hello.index', $data);
-        // $data = Storage::get($this->frame) . PHP_EOL . $msg;
-
-        // if (Storage::disk('public')->exists('bk_' . $this->frame)) {
-        //     Storage::disk('public')->delete('bk_' . $this->frame);
-        // }
-        // Storage::disk('public')->copy($this->frame, 'bk_' . $this->frame);
-
-        // if (Storage::disk('local')->exists('bk_' . $this->frame)) {
-        //     Storage::disk('local')->delete('bk_' . $this->frame);
-        // }
-        $ext = '.'.$request->file('file')->extension();
-        Storage::disk('public')->putFileAs('files', $request->file('file'), 'uploaded' . $ext);
+        $record = Person::find($id);
+        $record->name = $name;
+        $record->save();
         return redirect()->route('hello');
     }
+
+    public function other()
+    {
+        $record = new Person();
+        $record->all_data = ['aaa', 'bbb@ccc', 1234];
+        $record->save();
+        return redirect()->route('hello');
+    }
+
+    public function json($id = -1)
+    {
+        if ($id == -1) {
+            return Person::get()->toJson();
+        } else {
+            return Person::find($id)->toJson();
+        }
+    }
+
+    public function send(Request $request)
+    {
+
+        $input = $request->input('find');
+        $msg = 'search: ' . $input;
+        $result = Person::search($input)->get();
+
+        $data = [
+            'input' => $input,
+            'msg' => $msg,
+            'data' => $result,
+        ];
+
+        return view('hello.index', $data);
+    }
+
 }
