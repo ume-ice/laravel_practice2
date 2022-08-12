@@ -45,6 +45,12 @@ class Person extends Model
         $this->attributes['age'] = $values[2];
     }
 
+    public function getAllDataAttribute()
+    {
+        return $this->name . '(' . $this->age . ')'
+            . ' [' . $this->mail . ']';
+    }
+
     public function toSearchableArray()
     {
         $array = $this->toArray();

@@ -18,6 +18,13 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
+        // 'App\Events\PersonEvent' => [
+        //     'App\Listeners\PersonEventListener',
+        // ],
+    ];
+
+    protected $subscribe = [
+        // 'App\Listeners\MyEventSubscriver',
     ];
 
     /**
@@ -30,5 +37,10 @@ class EventServiceProvider extends ServiceProvider
         parent::boot();
 
         //
+    }
+
+    public function shouldDiscoverEvents()
+    {
+        return true;
     }
 }

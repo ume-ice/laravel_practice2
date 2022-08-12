@@ -28,6 +28,7 @@ Route::middleware([HelloMiddleware::class])->group(function() {
     Route::get('/hello', 'HelloController@index')->name('hello')->middleware('MyMW');
     // Route::get('/hello/{id}', 'HelloController@index')->name('hello')->middleware('App\Http\Middleware\MyMiddleware::class');
     // Route::post('/hello', 'HelloController@index')->name('hello');
+    Route::get('/hello/{person}', 'HelloController@index');
     Route::get('/hello/other', 'HelloController@other');
     // Route::get('/hello/{id}/{name}', 'HelloController@save');
     Route::get('/hello/json', 'HelloController@json');

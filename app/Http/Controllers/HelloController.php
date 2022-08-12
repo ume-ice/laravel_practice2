@@ -6,11 +6,13 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
 use App\Person;
+use App\Jobs\MyJob;
 // use App\MyClasses\MyService;
 use App\MyClasses\MyServiceInterface;
 use App\Facades\MyService;
 use Illuminate\Support\Facades\DB;
 use App\Http\Pagination\MyPaginator;
+use App\Events\PersonEvent;
 
 class HelloController extends Controller
 {
@@ -23,7 +25,7 @@ class HelloController extends Controller
         // $myService = app('App\MyClasses\MyService');
     }
 
-    public function index(Request $request)
+    public function index(Person $person = null)
     {
         // if ($id >= 0) {
         //     $msg = 'get name like "' . $id . '"';
@@ -58,7 +60,10 @@ class HelloController extends Controller
         // DB::table('people')->insert(['name'=>'test5', 'age'=> 18, 'mail'=>'test5@gmail.com']);
         // DB::table('people')->insert(['name'=>'test6', 'age'=> 18, 'mail'=>'test6@gmail.com']);
 
-        Person::get(['*'])->searchable();
+        // if ($person != null) {
+        //     $qname = $person->id % 2 == 0 ? 'even' : 'odd';
+        //     MyJob::dispatch($person)->onQueue($qname);
+        // }
 
         $msg = 'show people record.';
         $result = Person::get();
@@ -99,14 +104,22 @@ class HelloController extends Controller
     public function send(Request $request)
     {
 
-        $input = $request->input('find');
-        $msg = 'search: ' . $input;
-        $result = Person::search($input)->get();
+        $id = $request->input('id');
+        $person = Person::find($id);
+
+        // dump($person->all_data);die;
+
+        event(new PersonEvent($person));
+
+        // dispatch(function() use ($person) {
+        //     Storage::append('person_access_log.txt', $person->all_data);
+        // });
+        // return redirect()->route('hello');
 
         $data = [
-            'input' => $input,
-            'msg' => $msg,
-            'data' => $result,
+            'input' => '',
+            'msg' => 'id=' . $id,
+            'data' => [$person],
         ];
 
         return view('hello.index', $data);
