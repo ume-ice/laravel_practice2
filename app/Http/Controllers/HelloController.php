@@ -25,7 +25,7 @@ class HelloController extends Controller
         // $myService = app('App\MyClasses\MyService');
     }
 
-    public function index(Person $person = null)
+    public function index()
     {
         // if ($id >= 0) {
         //     $msg = 'get name like "' . $id . '"';
@@ -65,13 +65,16 @@ class HelloController extends Controller
         //     MyJob::dispatch($person)->onQueue($qname);
         // }
 
-        $msg = 'show people record.';
-        $result = Person::get();
+        // $msg = 'show people record.';
+        // $result = Person::get();
 
+        // $data = [
+        //     'input' => '',
+        //     'msg' => $msg,
+        //     'data' => $result,
+        // ];
         $data = [
-            'input' => '',
-            'msg' => $msg,
-            'data' => $result,
+            'msg' => 'This is Angular application',
         ];
         return view('hello.index', $data);
     }
